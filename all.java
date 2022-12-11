@@ -89,6 +89,37 @@ public class ChartView extends View {
         }
 
     }
+    
+    public class ChartActivity extends AppCompatActivity {
+
+    public static final String ACCOUNTS_KEY = "accounts";
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        List<BankAccount> accounts = (List<BankAccount>) getIntent().getSerializableExtra(ACCOUNTS_KEY);
+        Map<String, Integer> source = calculateChartSource(accounts);
+        setContentView(new ChartView(getApplicationContext(), source));
+    }
+
+    private Map<String, Integer> calculateChartSource(List<BankAccount> accounts) {
+        if (accounts == null || accounts.isEmpty()) {
+            return new HashMap<>();
+        }
+        Map<String, Integer> source = new HashMap<>();
+        for (BankAccount account : accounts) {
+            String key = account.getBankName();
+            if (source.containsKey(key)) {
+                Integer currentValue = source.get(key);
+                source.put(key, currentValue + 1);
+            } else {
+                source.put(key, 1);
+            }
+        }
+        return source;
+    }
+}
 
     private int generateColor(int currentBarPosition) {
         return currentBarPosition % 2 == 0 ? Color.LTGRAY : Color.CYAN;
